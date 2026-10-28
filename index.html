@@ -47,8 +47,8 @@
   --r:26px; --ease:cubic-bezier(.2,.8,.2,1);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;scroll-padding-top:84px}
-body{font-family:'Bricolage Grotesque',sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+html{scroll-behavior:smooth;scroll-padding-top:84px;overflow-x:clip}
+body{font-family:'Bricolage Grotesque',sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;overflow-x:hidden;overflow-x:clip;-webkit-font-smoothing:antialiased}
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
 button{font:inherit;cursor:pointer}
@@ -85,11 +85,12 @@ h2 em,h1 em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:4
 .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#7ff0a4;margin-right:8px;animation:blink 1.6s infinite}
 @keyframes blink{50%{opacity:.25}}
 
-/* Header */
-header{position:sticky;top:0;z-index:100;background:#f6f1eacc;backdrop-filter:blur(16px);border-bottom:1px solid transparent;transition:.3s}
+/* Header (blur no pseudo-elemento para não prender o menu mobile) */
+header{position:sticky;top:0;z-index:100;border-bottom:1px solid transparent;transition:.3s}
+header::before{content:"";position:absolute;inset:0;background:#f6f1eacc;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);z-index:-1}
 header.s{border-color:var(--line)}
 .nav{display:flex;justify-content:space-between;align-items:center;height:72px}
-.brand{font-size:1.25rem;font-weight:600;letter-spacing:-.03em}
+.brand{position:relative;z-index:96;font-size:1.25rem;font-weight:600;letter-spacing:-.03em}
 .brand em{font-family:'Instrument Serif',serif;font-weight:400;color:var(--acc)}
 .menu{display:flex;gap:30px;align-items:center;list-style:none;font-size:.9rem}
 .menu a:not(.btn){position:relative;padding:4px 0}
@@ -264,7 +265,7 @@ footer{padding:60px 0 100px;font-size:.85rem;color:var(--mute)}
 .chat-f{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:#fff}
 .chat-f input{flex:1;border:1px solid var(--line);border-radius:100px;padding:12px 18px;font:inherit;font-size:.88rem;outline:none}
 .chat-f input:focus{border-color:var(--acc)}
-.chat-f button{width:44px;height:44px;border-radius:50%;border:0;background:var(--ink);color:#fff}
+.chat-f button{width:44px;height:44px;border-radius:50%;border:0;background:var(--ink);color:#fff;display:grid;place-items:center}
 
 /* Reveal */
 .rv-in{opacity:0;transform:translateY(36px);transition:1s var(--ease)}
@@ -273,10 +274,9 @@ footer{padding:60px 0 100px;font-size:.85rem;color:var(--mute)}
 
 @media(max-width:980px){
   section{padding:80px 0}
-  .burger{display:block}
-  .menu{position:fixed;inset:0;background:var(--bg);flex-direction:column;justify-content:center;gap:28px;font-size:1.5rem;transform:translateX(100%);transition:.5s var(--ease);z-index:90}
-  .menu.o{transform:none}
-  .burger{z-index:95}
+  .burger{display:block;z-index:95}
+  .menu{position:fixed;inset:0;background:var(--bg);flex-direction:column;justify-content:center;gap:28px;font-size:1.5rem;transform:translateX(100%);visibility:hidden;transition:transform .5s var(--ease),visibility 0s .5s;z-index:90}
+  .menu.o{transform:none;visibility:visible;transition:transform .5s var(--ease)}
   .hero-grid,.auth-grid,.final-grid,.faq-wrap{grid-template-columns:1fr;gap:44px}
   .collage{height:520px}
   .proof-grid{grid-template-columns:repeat(2,1fr)}
@@ -338,7 +338,7 @@ footer{padding:60px 0 100px;font-size:.85rem;color:var(--mute)}
       <div class="media m1" data-key="hero" data-label="Foto principal<br>(img/hero.jpg)"></div>
       <div class="media m2" data-key="espaco0" data-label="Foto do espaço"></div>
       <div class="g-card"><b>5,0</b><div class="st">★★★★★</div><small>52 avaliações no Google</small></div>
-      <div class="wa-mini">Oi! Quero agendar minha micropigmentação ✨<small>WhatsApp · agora</small></div>
+      <div class="wa-mini">Oi! Quero agendar minha micropigmentação<small>WhatsApp · agora</small></div>
     </div>
   </div>
 </section>
@@ -530,7 +530,7 @@ footer{padding:60px 0 100px;font-size:.85rem;color:var(--mute)}
 </footer>
 
 <!-- CHAT 24h -->
-<div class="teaser" id="teaser">👋 Quer agendar? Eu atendo você agora, 24h por dia.</div>
+<div class="teaser" id="teaser">Quer agendar? Eu atendo você agora, 24h por dia.</div>
 <button class="chat-fab" id="fab" aria-label="Abrir atendimento no WhatsApp">
   <span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.5 3.5A11.8 11.8 0 0 0 12 0C5.4 0 .1 5.3.1 11.9c0 2.1.5 4.1 1.6 5.9L0 24l6.4-1.7a12 12 0 0 0 5.6 1.4c6.6 0 11.9-5.3 11.9-11.9 0-3.2-1.2-6.2-3.4-8.3zM12 21.7c-1.8 0-3.6-.5-5.1-1.4l-.4-.2-3.8 1 1-3.7-.2-.4a9.8 9.8 0 0 1-1.5-5.2C2 6.4 6.5 2 12 2c2.6 0 5.1 1 6.9 2.9a9.7 9.7 0 0 1 2.9 6.9c0 5.4-4.4 9.9-9.8 9.9zm5.4-7.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1l-1 1.2c-.2.2-.4.2-.7.1a8 8 0 0 1-4-3.5c-.3-.5.3-.5.9-1.6.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5 1.9.8 2.6.9 3.5.7.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.1-.3-.2-.6-.3z"/></svg></span>
   <span class="t">Agendar agora<small>Atendimento 24h</small></span>
@@ -538,7 +538,7 @@ footer{padding:60px 0 100px;font-size:.85rem;color:var(--mute)}
 <div class="chat" id="chat" role="dialog" aria-label="Assistente de agendamento">
   <div class="chat-h"><div class="av">M</div><div><b>Assistente da Marina</b><small>● Online 24h · responde na hora</small></div><button class="x" onclick="Chat.close()" aria-label="Fechar">×</button></div>
   <div class="chat-b" id="cb"></div>
-  <form class="chat-f" id="cf"><input id="ci" placeholder="Digite aqui..." autocomplete="off"><button aria-label="Enviar">➤</button></form>
+  <form class="chat-f" id="cf"><input id="ci" placeholder="Digite aqui..." autocomplete="off"><button aria-label="Enviar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form>
 </div>
 
 <script>
@@ -549,7 +549,7 @@ const CONFIG = {
   whatsapp: "5511970714620",
   instagram: "marinadavid",            // TROQUE pelo @ real, sem o @
   leadEndpoint: "",                    // opcional: URL (Google Apps Script, Zapier, Make, CRM) que recebe os leads por POST
-  greeting: "Olá, Marina! Vim pelo site e gostaria de agendar um horário. ✨"
+  greeting: "Olá, Marina! Vim pelo site e gostaria de agendar um horário."
 };
 
 /* Coloque suas fotos na pasta /img com estes nomes */
@@ -671,14 +671,14 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{
 $$(".rv-in,[data-c]").forEach(el=>io.observe(el));
 
 /* =====================================================
-   ASSISTENTE 24h → WHATSAPP (qualificação de lead)
+   ASSISTENTE 24h -> WHATSAPP (qualificação de lead)
 ===================================================== */
 const Chat=(()=>{
   const box=$("#chat"),body=$("#cb"),form=$("#cf"),inp=$("#ci"),teaser=$("#teaser");
   const lead={}; let step=0,started=false,waitingText=false;
 
   const flow=[
-    {k:"servico",q:"Oi! 👋 Sou a assistente da Marina e atendo você 24h. Qual serviço você procura?",o:["Micropigmentação","Design de sobrancelhas","Retoque / manutenção","Ainda não sei"]},
+    {k:"servico",q:"Oi! Sou a assistente da Marina e atendo você 24h. Qual serviço você procura?",o:["Micropigmentação","Design de sobrancelhas","Retoque / manutenção","Ainda não sei"]},
     {k:"objetivo",q:"Perfeito! O que você mais gostaria de resolver?",o:["Preencher falhas","Definir o formato","Corrigir trabalho anterior","Quero uma indicação"]},
     {k:"quando",q:"Para quando você pensa em agendar?",o:["O quanto antes","Nesta semana","Neste mês","Só pesquisando"]},
     {k:"nome",q:"Para finalizar, qual é o seu nome?",text:true}
@@ -712,7 +712,7 @@ const Chat=(()=>{
     try{const all=JSON.parse(localStorage.getItem("leads")||"[]");all.push(lead);localStorage.setItem("leads",JSON.stringify(all))}catch(e){}
     if(CONFIG.leadEndpoint){fetch(CONFIG.leadEndpoint,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify(lead)}).catch(()=>{})}
     track("lead_generated",{servico:lead.servico,quando:lead.quando});window.fbq&&fbq("track","Lead");
-    bot(`Obrigada, ${lead.nome}! Seu pedido está pronto. Toque abaixo para enviar à Marina no WhatsApp. Se estiver fora do horário, ela responde assim que possível. 💛`,()=>{
+    bot(`Obrigada, ${lead.nome}! Seu pedido está pronto. Toque abaixo para enviar à Marina no WhatsApp. Se estiver fora do horário, ela responde assim que possível.`,()=>{
       const a=document.createElement("a");a.className="btn btn-wa";a.style.cssText="align-self:flex-start;padding:13px 22px;font-size:.88rem";
       a.href=waUrl(msg);a.target="_blank";a.rel="noopener";a.innerHTML="Enviar no WhatsApp <span class='ar'>→</span>";
       a.onclick=()=>track("whatsapp_click",{local:"chat"});
@@ -736,4 +736,4 @@ const Chat=(()=>{
 window.Chat=Chat;
 </script>
 </body>
-      </html>
+</html>
